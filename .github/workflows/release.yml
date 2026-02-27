@@ -200,6 +200,7 @@ jobs:
               -Title "Lumos $env:RELEASE_TAG" `
               -Repo "${{ github.repository }}" `
               -Rebuild `
+              -AllowDirty `
               -SkipApp
           } else {
             ./publish-release.ps1 `
@@ -207,7 +208,8 @@ jobs:
               -Tag "$env:RELEASE_TAG" `
               -Title "Lumos $env:RELEASE_TAG" `
               -Repo "${{ github.repository }}" `
-              -Rebuild
+              -Rebuild `
+              -AllowDirty
           }
 
       - name: Attest Windows agent
