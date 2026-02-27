@@ -1,14 +1,13 @@
 param(
     [string]$Repo = "",
     [string]$Environment = "release",
-    [Parameter(Mandatory = $true)]
-    [string]$KeystorePath,
-    [Parameter(Mandatory = $true)]
-    [string]$KeystorePassword,
-    [Parameter(Mandatory = $true)]
-    [string]$KeyAlias,
-    [Parameter(Mandatory = $true)]
-    [string]$KeyPassword
+    [string]$KeystorePath = "",
+    [string]$KeystorePassword = "",
+    [string]$KeyAlias = "",
+    [string]$KeyPassword = "",
+    [switch]$GenerateNewKeystore,
+    [string]$GeneratedKeystoreDir = "",
+    [string]$CredentialOutputPath = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -25,6 +24,20 @@ function Require-Command {
     if (-not $cmd) {
         throw "Required command not found: $Name"
     }
+}
+
+function New-RandomSecret {
+    param([int]$Length = 32)
+    $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    $bytes = New-Object byte[] ($Length)
+    $rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+    $rng.GetBytes($bytes)
+    $rng.Dispose()
+    $builder = New-Object System.Text.StringBuilder
+    for ($i = 0; $i -lt $Length; $i++) {
+        [void]$builder.Append($chars[$bytes[$i] % $chars.Length])
+    }
+    return $builder.ToString()
 }
 
 function Resolve-RepoFromRemote {
@@ -53,12 +66,84 @@ function Set-GitHubEnvironmentSecret {
 Require-Command "gh"
 Require-Command "git"
 
-if (-not (Test-Path $KeystorePath)) {
-    throw "Keystore file not found: $KeystorePath"
-}
-
 if ([string]::IsNullOrWhiteSpace($Repo)) {
     $Repo = Resolve-RepoFromRemote
+}
+
+if ($GenerateNewKeystore) {
+    Require-Command "keytool"
+
+    if ([string]::IsNullOrWhiteSpace($GeneratedKeystoreDir)) {
+        $GeneratedKeystoreDir = Join-Path $env:USERPROFILE ".lumos\signing"
+    }
+    New-Item -Path $GeneratedKeystoreDir -ItemType Directory -Force | Out-Null
+
+    if ([string]::IsNullOrWhiteSpace($KeyAlias)) {
+        $KeyAlias = "lumos-release"
+    }
+    if ([string]::IsNullOrWhiteSpace($KeystorePassword)) {
+        $KeystorePassword = New-RandomSecret -Length 32
+    }
+    if ([string]::IsNullOrWhiteSpace($KeyPassword)) {
+        $KeyPassword = New-RandomSecret -Length 32
+    }
+
+    if ([string]::IsNullOrWhiteSpace($KeystorePath)) {
+        $KeystorePath = Join-Path $GeneratedKeystoreDir "lumos-release.jks"
+    }
+
+    if (Test-Path $KeystorePath) {
+        $stamp = (Get-Date).ToUniversalTime().ToString("yyyyMMddHHmmss")
+        $KeystorePath = Join-Path $GeneratedKeystoreDir "lumos-release-$stamp.jks"
+    }
+
+    Write-Step "Generating Android release keystore"
+    & keytool `
+        -genkeypair `
+        -v `
+        -keystore $KeystorePath `
+        -storetype JKS `
+        -storepass $KeystorePassword `
+        -keypass $KeyPassword `
+        -alias $KeyAlias `
+        -keyalg RSA `
+        -keysize 4096 `
+        -validity 10000 `
+        -dname "CN=Lumos Release, OU=Lumos, O=Lumos, L=NA, ST=NA, C=US" | Out-Null
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "keytool failed with exit code $LASTEXITCODE."
+    }
+
+    if ([string]::IsNullOrWhiteSpace($CredentialOutputPath)) {
+        $CredentialOutputPath = Join-Path $GeneratedKeystoreDir "lumos-android-signing.txt"
+    }
+
+    @(
+        "keystore_path=$KeystorePath",
+        "key_alias=$KeyAlias",
+        "keystore_password=$KeystorePassword",
+        "key_password=$KeyPassword"
+    ) | Set-Content -Path $CredentialOutputPath -Encoding utf8
+
+    Write-Host "Generated keystore: $KeystorePath" -ForegroundColor Green
+    Write-Host "Credential record: $CredentialOutputPath" -ForegroundColor Yellow
+}
+
+if ([string]::IsNullOrWhiteSpace($KeystorePath)) {
+    throw "KeystorePath is required. Provide -KeystorePath or use -GenerateNewKeystore."
+}
+if ([string]::IsNullOrWhiteSpace($KeystorePassword)) {
+    throw "KeystorePassword is required. Provide -KeystorePassword or use -GenerateNewKeystore."
+}
+if ([string]::IsNullOrWhiteSpace($KeyAlias)) {
+    throw "KeyAlias is required. Provide -KeyAlias or use -GenerateNewKeystore."
+}
+if ([string]::IsNullOrWhiteSpace($KeyPassword)) {
+    throw "KeyPassword is required. Provide -KeyPassword or use -GenerateNewKeystore."
+}
+if (-not (Test-Path $KeystorePath)) {
+    throw "Keystore file not found: $KeystorePath"
 }
 
 $resolvedKeystore = (Resolve-Path $KeystorePath).Path
