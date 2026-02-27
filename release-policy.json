@@ -14,7 +14,7 @@
     }
   ],
   "android_signing": {
-    "required_cert_sha256": "551B561657DABC502D4EE5AA96BA8A1E9CD2B18A79EE44FF4DABD6EE385AC962",
+    "required_cert_sha256": "3B0DE1B72264A047797822A7755933FE98AEA1E978B12BD5DB7DEB564D785A87",
     "notes": "Set this to the long-lived Android release signing cert SHA-256 fingerprint (hex with or without colons) to enforce signer continuity across releases."
   }
 }
