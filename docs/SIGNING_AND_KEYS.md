@@ -14,6 +14,26 @@ This document defines artifact signing expectations and key custody practices.
   - `checksums.txt.sig`
   - `checksums.txt.pem`
 
+## Android Signing Secret Bootstrap
+
+Release workflow expects these environment secrets in GitHub Environment `release`:
+- `ANDROID_KEYSTORE_BASE64`
+- `ANDROID_KEYSTORE_PASSWORD`
+- `ANDROID_KEY_ALIAS`
+- `ANDROID_KEY_PASSWORD`
+
+Use the setup helper:
+
+```powershell
+./scripts/setup-android-signing-secrets.ps1 `
+  -Repo coff33ninja/lumos `
+  -Environment release `
+  -KeystorePath "C:\path\to\release.jks" `
+  -KeystorePassword "<store-password>" `
+  -KeyAlias "<key-alias>" `
+  -KeyPassword "<key-password>"
+```
+
 ## Required Workflow Permissions
 
 - `id-token: write`

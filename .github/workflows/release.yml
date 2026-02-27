@@ -134,9 +134,7 @@ jobs:
             }
           }
           if ($missing.Count -gt 0) {
-            Write-Warning ("Missing Android signing secrets ({0}); proceeding with agent-only release." -f ($missing -join ", "))
-            Add-Content -Path $env:GITHUB_ENV -Value "SKIP_APP_BUILD=true"
-            exit 0
+            throw ("Missing Android signing secrets ({0}). Configure environment 'release' secrets or rerun with include_apk=false for agent-only release." -f ($missing -join ", "))
           }
 
           $keystorePath = Join-Path $env:RUNNER_TEMP "lumos-release.jks"

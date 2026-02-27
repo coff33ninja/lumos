@@ -167,6 +167,18 @@ GitHub Actions release workflow derives these env vars from repository secrets:
 - `ANDROID_KEY_ALIAS`
 - `ANDROID_KEY_PASSWORD`
 
+Bootstrap command:
+
+```powershell
+./scripts/setup-android-signing-secrets.ps1 `
+  -Repo coff33ninja/lumos `
+  -Environment release `
+  -KeystorePath "C:\path\to\release.jks" `
+  -KeystorePassword "<store-password>" `
+  -KeyAlias "<key-alias>" `
+  -KeyPassword "<key-password>"
+```
+
 CI signing normalization:
 
 - `release-publish` exports `LUMOS_USE_UBER_APK_SIGNER=true` and `LUMOS_UBER_APK_SIGNER_VERSION=1.3.0`.
