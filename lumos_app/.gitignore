@@ -1,0 +1,10 @@
+# Flutter app local/build artifacts
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub/
+.packages
+build/
+coverage/
+.metadata
+android/.gradle/

@@ -1,0 +1,8 @@
+agent.exe
+/agent
+lumos-agent.exe
+lumos-tray.exe
+*.log
+lumos-agent-state.json
+lumos-config.local.json
+.env

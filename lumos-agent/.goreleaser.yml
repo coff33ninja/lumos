@@ -1,0 +1,26 @@
+project_name: lumos-agent
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: agent
+    main: ./cmd/agent
+    binary: lumos-agent
+    goos: [windows, linux, darwin]
+    goarch: [amd64, arm64]
+  - id: tray
+    main: ./cmd/tray
+    binary: lumos-tray
+    goos: [windows]
+    goarch: [amd64]
+    ldflags:
+      - -H=windowsgui
+
+archives:
+  - format: zip
+    builds: [agent, tray]
+
+checksum:
+  name_template: checksums.txt

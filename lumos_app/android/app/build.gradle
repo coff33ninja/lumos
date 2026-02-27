@@ -1,0 +1,109 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def isGitHubActions = "true".equalsIgnoreCase((System.getenv('GITHUB_ACTIONS') ?: '').trim())
+def releaseStoreFile = (System.getenv('LUMOS_ANDROID_STORE_FILE') ?: '').trim()
+def releaseStorePassword = (System.getenv('LUMOS_ANDROID_STORE_PASSWORD') ?: '').trim()
+def releaseKeyAlias = (System.getenv('LUMOS_ANDROID_KEY_ALIAS') ?: '').trim()
+def releaseKeyPassword = (System.getenv('LUMOS_ANDROID_KEY_PASSWORD') ?: '').trim()
+
+def hasReleaseSigning = !releaseStoreFile.isEmpty() &&
+    !releaseStorePassword.isEmpty() &&
+    !releaseKeyAlias.isEmpty() &&
+    !releaseKeyPassword.isEmpty()
+
+def wantsReleaseBuild = gradle.startParameter.taskNames.any { taskName ->
+    def lowered = taskName.toLowerCase()
+    lowered.contains('release') || lowered.contains('bundle')
+}
+
+if (wantsReleaseBuild && !isGitHubActions) {
+    throw new GradleException(
+        "Release APK signing is restricted to GitHub Actions. " +
+        "Run release builds via the release-publish workflow."
+    )
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+android {
+    namespace "com.lumos.app"
+    compileSdk 36
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        applicationId "com.lumos.app"
+        minSdkVersion flutter.minSdkVersion
+        targetSdk 36
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+        ndk {
+            abiFilters 'x86_64'
+        }
+    }
+
+    signingConfigs {
+        release {
+            if (hasReleaseSigning) {
+                storeFile file(releaseStoreFile)
+                storePassword releaseStorePassword
+                keyAlias releaseKeyAlias
+                keyPassword releaseKeyPassword
+                v1SigningEnabled true
+                v2SigningEnabled true
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            } else if (wantsReleaseBuild) {
+                throw new GradleException(
+                    "Release signing env vars are not configured in CI. " +
+                    "Required: LUMOS_ANDROID_STORE_FILE, LUMOS_ANDROID_STORE_PASSWORD, " +
+                    "LUMOS_ANDROID_KEY_ALIAS, LUMOS_ANDROID_KEY_PASSWORD."
+                )
+            }
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {}

@@ -1,0 +1,246 @@
+name: release-publish
+
+on:
+  push:
+    tags:
+      - "v*"
+      - "[0-9]*.[0-9]*.[0-9]*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag (stable auto-prepends 'v'; prerelease auto-removes leading 'v')"
+        required: true
+        type: string
+      channel:
+        description: "Release channel"
+        required: true
+        default: stable
+        type: choice
+        options:
+          - stable
+          - beta
+          - unreleased
+      include_apk:
+        description: "Include signed APK in release assets"
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    environment: release
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Normalize release metadata
+        shell: pwsh
+        run: |
+          $eventName = "${{ github.event_name }}"
+          $tag = "${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}".Trim()
+          $channel = "${{ github.event_name == 'workflow_dispatch' && inputs.channel || (contains(github.ref_name, 'unreleased') && 'unreleased' || (contains(github.ref_name, '-') && 'beta' || 'stable')) }}".Trim().ToLowerInvariant()
+          $includeApk = "${{ github.event_name == 'workflow_dispatch' && inputs.include_apk || 'true' }}".Trim().ToLowerInvariant()
+
+          if ($eventName -eq "workflow_dispatch") {
+            if ($channel -eq "stable" -and -not $tag.StartsWith("v")) {
+              $tag = "v$tag"
+            }
+            if ($channel -ne "stable" -and $tag.StartsWith("v")) {
+              $tag = $tag.Substring(1)
+            }
+          }
+
+          @(
+            "RELEASE_TAG=$tag",
+            "RELEASE_CHANNEL=$channel",
+            "RELEASE_INCLUDE_APK=$includeApk"
+          ) | ForEach-Object {
+            Add-Content -Path $env:GITHUB_ENV -Value $_
+          }
+
+      - name: Validate release trigger inputs
+        shell: pwsh
+        run: |
+          $tag = "$env:RELEASE_TAG"
+          $channel = "$env:RELEASE_CHANNEL"
+          if ($tag -notmatch '^v?\d+\.\d+\.\d+([\-+].+)?$') {
+            throw "Invalid tag format: '$tag'. Expected semantic version tag like 1.1.1."
+          }
+          if ($channel -eq "stable" -and $tag.Contains("-")) {
+            throw "Stable channel cannot use prerelease tags. Use beta/unreleased for '$tag'."
+          }
+          if ($channel -eq "stable" -and -not $tag.StartsWith("v")) {
+            throw "Stable releases must use 'v' prefix. Example: v1.0.0."
+          }
+          if ($channel -ne "stable" -and $tag.StartsWith("v")) {
+            throw "Pre-release channels must not use 'v' prefix. Example: 1.0.0-beta.1."
+          }
+
+      - name: Auto-update release docs metadata
+        shell: pwsh
+        run: |
+          ./scripts/update-release-docs.ps1 `
+            -Tag "$env:RELEASE_TAG" `
+            -Channel "$env:RELEASE_CHANNEL" `
+            -Commit "auto" `
+            -DocsVersionFile "docs/docs-version.json"
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: lumos-agent/go.mod
+          cache: true
+          cache-dependency-path: lumos-agent/go.sum
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Prepare Android release signing
+        shell: pwsh
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if ("$env:RELEASE_INCLUDE_APK".Trim().ToLowerInvariant() -ne "true") {
+            Write-Warning "APK release disabled by workflow input. Proceeding with agent-only release."
+            Add-Content -Path $env:GITHUB_ENV -Value "SKIP_APP_BUILD=true"
+            exit 0
+          }
+
+          $required = @(
+            "ANDROID_KEYSTORE_BASE64",
+            "ANDROID_KEYSTORE_PASSWORD",
+            "ANDROID_KEY_ALIAS",
+            "ANDROID_KEY_PASSWORD"
+          )
+          $missing = @()
+          foreach ($name in $required) {
+            $value = [Environment]::GetEnvironmentVariable($name)
+            if ([string]::IsNullOrWhiteSpace($value)) {
+              $missing += $name
+            }
+          }
+          if ($missing.Count -gt 0) {
+            Write-Warning ("Missing Android signing secrets ({0}); proceeding with agent-only release." -f ($missing -join ", "))
+            Add-Content -Path $env:GITHUB_ENV -Value "SKIP_APP_BUILD=true"
+            exit 0
+          }
+
+          $keystorePath = Join-Path $env:RUNNER_TEMP "lumos-release.jks"
+          [System.IO.File]::WriteAllBytes(
+            $keystorePath,
+            [System.Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64)
+          )
+
+          @(
+            "LUMOS_ANDROID_STORE_FILE=$keystorePath",
+            "LUMOS_ANDROID_STORE_PASSWORD=$env:ANDROID_KEYSTORE_PASSWORD",
+            "LUMOS_ANDROID_KEY_ALIAS=$env:ANDROID_KEY_ALIAS",
+            "LUMOS_ANDROID_KEY_PASSWORD=$env:ANDROID_KEY_PASSWORD",
+            "LUMOS_USE_UBER_APK_SIGNER=true",
+            "LUMOS_UBER_APK_SIGNER_VERSION=1.3.0"
+          ) | ForEach-Object {
+            Add-Content -Path $env:GITHUB_ENV -Value $_
+          }
+          Add-Content -Path $env:GITHUB_ENV -Value "SKIP_APP_BUILD=false"
+
+      - name: Validate version policy
+        shell: pwsh
+        run: |
+          ./scripts/validate-version-policy.ps1
+
+      - name: Validate compatibility matrix
+        shell: pwsh
+        run: |
+          ./scripts/validate-release-compatibility.ps1 `
+            -PolicyFile "release-policy.json" `
+            -PubspecPath "lumos_app/pubspec.yaml" `
+            -AgentVersion "$env:RELEASE_TAG" `
+            -Channel "$env:RELEASE_CHANNEL"
+
+      - name: Validate release notes metadata
+        shell: pwsh
+        run: |
+          $short = "$env:GITHUB_SHA".Substring(0, 7)
+          ./scripts/validate-release-metadata.ps1 `
+            -ExpectedTag "$env:RELEASE_TAG" `
+            -ExpectedCommit "$short" `
+            -NotesFile "docs/RELEASE_NOTES.md"
+
+      - name: Validate docs version metadata
+        shell: pwsh
+        run: |
+          ./scripts/validate-docs-version.ps1 `
+            -ExpectedTag "$env:RELEASE_TAG" `
+            -Channel "$env:RELEASE_CHANNEL" `
+            -DocsVersionFile "docs/docs-version.json"
+
+      - name: Build + publish release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if ("$env:SKIP_APP_BUILD".Trim().ToLowerInvariant() -eq "true") {
+            ./publish-release.ps1 `
+              -Channel "$env:RELEASE_CHANNEL" `
+              -Tag "$env:RELEASE_TAG" `
+              -Title "Lumos $env:RELEASE_TAG" `
+              -Repo "${{ github.repository }}" `
+              -Rebuild `
+              -SkipApp
+          } else {
+            ./publish-release.ps1 `
+              -Channel "$env:RELEASE_CHANNEL" `
+              -Tag "$env:RELEASE_TAG" `
+              -Title "Lumos $env:RELEASE_TAG" `
+              -Repo "${{ github.repository }}" `
+              -Rebuild
+          }
+
+      - name: Attest Windows agent
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: build/windows/agent.exe
+
+      - name: Attest Linux agent
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: build/linux/agent-linux-amd64
+
+      - name: Attest Android APK
+        if: env.SKIP_APP_BUILD != 'true'
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: build/android/app-release.apk
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3.7.0
+
+      - name: Sign checksums and upload signature (keyless)
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cosign sign-blob `
+            --yes `
+            --output-signature build/checksums.txt.sig `
+            --output-certificate build/checksums.txt.pem `
+            build/checksums.txt
+          gh release upload "$env:RELEASE_TAG" `
+            --repo "${{ github.repository }}" `
+            --clobber `
+            build/checksums.txt.sig `
+            build/checksums.txt.pem

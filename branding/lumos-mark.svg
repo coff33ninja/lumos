@@ -1,0 +1,20 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lumos mark">
+  <defs>
+    <linearGradient id="ring" x1="32" y1="32" x2="224" y2="224" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#19C7B4"/>
+      <stop offset="1" stop-color="#0E9F8D"/>
+    </linearGradient>
+    <linearGradient id="core" x1="88" y1="76" x2="176" y2="188" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFD57A"/>
+      <stop offset="1" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="56" fill="#0F172A"/>
+  <circle cx="128" cy="128" r="74" fill="none" stroke="url(#ring)" stroke-width="16"/>
+  <circle cx="128" cy="128" r="96" fill="none" stroke="#1E293B" stroke-width="8"/>
+  <path d="M121 66L89 133H124L112 190L167 112H132L146 66H121Z" fill="url(#core)"/>
+  <circle cx="60" cy="128" r="8" fill="#19C7B4"/>
+  <circle cx="196" cy="128" r="8" fill="#19C7B4"/>
+  <circle cx="128" cy="60" r="8" fill="#19C7B4"/>
+  <circle cx="128" cy="196" r="8" fill="#19C7B4"/>
+</svg>

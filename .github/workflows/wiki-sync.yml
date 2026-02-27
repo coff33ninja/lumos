@@ -1,0 +1,29 @@
+name: wiki-sync
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "docs/wiki/**"
+      - "docs/*.md"
+      - "scripts/publish-wiki.ps1"
+      - ".github/workflows/wiki-sync.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Sync GitHub Wiki
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          ./scripts/publish-wiki.ps1

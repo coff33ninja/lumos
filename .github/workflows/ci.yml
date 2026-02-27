@@ -1,0 +1,63 @@
+name: ci-validate
+
+on:
+  push:
+    branches: ["main"]
+    paths-ignore:
+      - "docs/**"
+  pull_request:
+    branches: ["main"]
+    paths-ignore:
+      - "docs/**"
+
+permissions:
+  contents: read
+
+jobs:
+  policy-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate version policy
+        shell: pwsh
+        run: ./scripts/validate-version-policy.ps1
+      - name: Validate docs version metadata format
+        shell: pwsh
+        run: ./scripts/validate-docs-version.ps1 -DocsVersionFile "docs/docs-version.json"
+
+  go-checks:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: lumos-agent
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: lumos-agent/go.mod
+          cache: true
+          cache-dependency-path: lumos-agent/go.sum
+      - name: Go test
+        run: go test ./...
+      - name: Go vet
+        run: go vet ./...
+
+  flutter-checks:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: lumos_app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Flutter pub get
+        run: flutter pub get
+      - name: Flutter analyze
+        run: flutter analyze
+      - name: Flutter test
+        run: flutter test

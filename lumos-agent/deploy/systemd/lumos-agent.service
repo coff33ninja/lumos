@@ -1,0 +1,21 @@
+[Unit]
+Description=Lumos Agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=lumos
+Group=lumos
+WorkingDirectory=/opt/lumos-agent
+EnvironmentFile=/etc/lumos-agent/lumos-agent.env
+ExecStart=/opt/lumos-agent/lumos-agent
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

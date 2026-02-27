@@ -1,0 +1,27 @@
+<svg width="760" height="220" viewBox="0 0 760 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lumos App logo">
+  <defs>
+    <linearGradient id="ring" x1="20" y1="20" x2="180" y2="180" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#19C7B4"/>
+      <stop offset="1" stop-color="#0E9F8D"/>
+    </linearGradient>
+    <linearGradient id="core" x1="66" y1="56" x2="138" y2="154" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFD57A"/>
+      <stop offset="1" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+  <rect width="760" height="220" rx="28" fill="#0B1220"/>
+  <g transform="translate(20,20)">
+    <rect width="180" height="180" rx="40" fill="#0F172A"/>
+    <circle cx="90" cy="90" r="50" fill="none" stroke="url(#ring)" stroke-width="12"/>
+    <circle cx="90" cy="90" r="66" fill="none" stroke="#1E293B" stroke-width="6"/>
+    <path d="M85 44L63 92H86L78 132L116 76H92L102 44H85Z" fill="url(#core)"/>
+    <circle cx="44" cy="90" r="5.5" fill="#19C7B4"/>
+    <circle cx="136" cy="90" r="5.5" fill="#19C7B4"/>
+    <circle cx="90" cy="44" r="5.5" fill="#19C7B4"/>
+    <circle cx="90" cy="136" r="5.5" fill="#19C7B4"/>
+  </g>
+  <g transform="translate(232,66)">
+    <text x="0" y="54" fill="#F8FAFC" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="68" font-weight="700" letter-spacing="1.2">LUMOS</text>
+    <text x="2" y="96" fill="#19C7B4" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="30" font-weight="600" letter-spacing="4.8">APP</text>
+  </g>
+</svg>

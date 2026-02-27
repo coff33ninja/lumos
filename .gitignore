@@ -1,0 +1,48 @@
+# Workspace
+DISCUSSION.MD
+TODO.md
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+.idea/
+.vscode/
+
+# Flutter / Dart
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.pub/
+**/.packages
+**/build/
+**/coverage/
+**/.metadata
+**/android/.gradle/
+**/android/local.properties
+**/android/key.properties
+**/*.jks
+**/*.keystore
+
+# Go
+**/bin/
+**/dist/
+**/tmp/
+**/*.test
+**/*.out
+**/*.prof
+
+# Local runtime/config/state secrets
+**/*.log
+lumos-agent/lumos-agent-state.json
+lumos-agent/lumos-config.local.json
+lumos-agent/.env
+lumos-agent/agent.exe~
+
+.fake
+.kiro
+
+
+#Ignore vscode AI rules
+.github\instructions\codacy.instructions.md
