@@ -64,7 +64,13 @@ jobs:
     - name: Prepare Java/Kotlin autobuild
       if: matrix.language == 'java-kotlin'
       shell: bash
-      run: chmod +x lumos_app/android/gradlew
+      run: |
+        chmod +x lumos_app/android/gradlew
+        if [ -e android ] && [ ! -L android ]; then
+          echo "Path 'android' already exists and is not a symlink; refusing to overwrite."
+          exit 1
+        fi
+        ln -sfn lumos_app/android android
 
     # Add any setup steps before running the `github/codeql-action/init` action.
     # This includes steps like installing compilers or runtimes (`actions/setup-node`
