@@ -91,6 +91,12 @@ jobs:
         fi
         ln -sfn lumos_app/android android
 
+    - name: Flutter pub get (Java/Kotlin)
+      if: matrix.language == 'java-kotlin'
+      shell: bash
+      working-directory: lumos_app
+      run: flutter pub get
+
     # Add any setup steps before running the `github/codeql-action/init` action.
     # This includes steps like installing compilers or runtimes (`actions/setup-node`
     # or others). This is typically only required for manual builds.
