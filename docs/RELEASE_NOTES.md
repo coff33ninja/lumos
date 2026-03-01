@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.1.0; updated_utc=2026-03-01 -->
 
 # Lumos Release Notes
 
@@ -7,10 +7,10 @@ Primary release-notes source for `publish-release.ps1`.
 ## Release Metadata
 
 - Channel: `stable`
-- Tag: `v1.0.0`
+- Tag: `v1.1.0`
 - Commit: `auto`
-- Date (UTC): `2026-02-27`
-- Compatibility baseline: app `v1.0.x` and agent `v1.0.x` patch line.
+- Date (UTC): `2026-03-01`
+- Compatibility baseline: app `v1.1.x` and agent `v1.1.x` patch line.
 
 ## Release Cut Checklist
 
@@ -19,6 +19,20 @@ Primary release-notes source for `publish-release.ps1`.
 - [x] Release artifacts built and verified.
 - [x] CI/CD and signing behavior reflected accurately.
 - [x] Documentation references reviewed.
+
+## Push History Since First Stable (v1.0.0)
+
+Main branch pushes between `v1.0.0` and current `v1.1.0` prep:
+
+- `2026-02-27` `e3be03e` Allow dirty tree during CI release publish after docs stamp
+- `2026-02-27` `0db38be` Add Android signing secret bootstrap and enforce APK signing config
+- `2026-02-27` `cf02f5e` Support generated keystore mode for Android signing secret setup
+- `2026-02-27` `1a38fbe` Update Android signing cert fingerprint policy
+- `2026-03-01` `edfecc7` Create `codeql.yml`
+- `2026-03-01` `2643022` CodeQL Java/Kotlin autobuild root targeting update
+- `2026-03-01` `2b284cd` CodeQL Android symlink shim for autobuild detection
+- `2026-03-01` `b0bc876` CodeQL Flutter `local.properties` bootstrap for Android build
+- `2026-03-01` `be81aff` CodeQL Java/Kotlin `flutter pub get` pre-step
 
 ## First Stable Release Summary (v1.0.0)
 
@@ -70,4 +84,3 @@ From `.github/workflows/ci.yml`, `.github/workflows/release.yml`, and release sc
 - `docs/VERSIONING.md` for tag/channel and compatibility policy.
 - `docs/SECURITY.md`, `docs/SECURITY_IMPROVEMENTS.md`, and credential analysis docs for security posture.
 - `docs/FUTURE.md` for planned post-v1 work.
-

@@ -127,6 +127,9 @@ func (s *Server) forwardCommandToPeer(peerAddress string, req PeerForwardRequest
 	if err != nil {
 		return err
 	}
+	if !isTrustedNormalizedRelayAddress(normalizedAddress) {
+		return fmt.Errorf("address failed safety policy")
+	}
 	body, err := json.Marshal(req)
 	if err != nil {
 		return err

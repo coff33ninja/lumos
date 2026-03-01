@@ -313,6 +313,9 @@ func (s *Server) verifyPeerAccess(address, password string) error {
 	if err != nil {
 		return err
 	}
+	if !isTrustedNormalizedRelayAddress(normalizedAddress) {
+		return errors.New("address failed safety policy")
+	}
 	url := endpointURL(normalizedAddress, "/v1/auth/token/list")
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {

@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.1.0; updated_utc=2026-03-01 -->
 
 # Lumos Versioning and Release Method
 
@@ -55,6 +55,20 @@ Use these tag formats:
 - `beta`: prerelease GitHub release
 - `unreleased`: prerelease snapshot
 
+## Push History Since First Stable (v1.0.0)
+
+Main branch pushes since the first stable release:
+
+- `2026-02-27` `e3be03e` Allow dirty tree during CI release publish after docs stamp
+- `2026-02-27` `0db38be` Add Android signing secret bootstrap and enforce APK signing config
+- `2026-02-27` `cf02f5e` Support generated keystore mode for Android signing secret setup
+- `2026-02-27` `1a38fbe` Update Android signing cert fingerprint policy
+- `2026-03-01` `edfecc7` Create `codeql.yml`
+- `2026-03-01` `2643022` CodeQL Java/Kotlin autobuild root targeting update
+- `2026-03-01` `2b284cd` CodeQL Android symlink shim for autobuild detection
+- `2026-03-01` `b0bc876` CodeQL Flutter `local.properties` bootstrap for Android build
+- `2026-03-01` `be81aff` CodeQL Java/Kotlin `flutter pub get` pre-step
+
 ## Required Pre-Cut Inputs
 
 Before every tag cut:
@@ -97,7 +111,7 @@ All must pass before publishing:
 One-command preflight:
 
 ```powershell
-./scripts/release-doctor.ps1 -ExpectedTag v1.0.0 -Rebuild
+./scripts/release-doctor.ps1 -ExpectedTag v1.1.0 -Rebuild
 ```
 
 ## Publish Commands
@@ -106,12 +120,12 @@ From repo root:
 
 1. RC cut
 ```powershell
-./publish-release.ps1 -Channel beta -Tag 1.0.0-rc.1 -Title "Lumos 1.0.0-rc.1" -Rebuild
+./publish-release.ps1 -Channel beta -Tag 1.1.0-rc.1 -Title "Lumos 1.1.0-rc.1" -Rebuild
 ```
 
 2. Stable cut
 ```powershell
-./publish-release.ps1 -Channel stable -Tag v1.0.0 -Title "Lumos v1.0.0" -Rebuild
+./publish-release.ps1 -Channel stable -Tag v1.1.0 -Title "Lumos v1.1.0" -Rebuild
 ```
 
 3. Beta snapshot

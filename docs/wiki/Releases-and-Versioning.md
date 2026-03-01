@@ -1,9 +1,9 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.1.0; updated_utc=2026-03-01 -->
 
 # Releases and Versioning
 
 Lumos versioning and release process is defined in `docs/VERSIONING.md`.
-Current stable target: `1.0.0`.
+Current stable target: `1.1.0`.
 
 ## Trigger Model
 

@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.1.0; updated_utc=2026-03-01 -->
 
 # Lumos
 
@@ -144,7 +144,7 @@ flutter test
   - checksums, signatures, and provenance attestations
 
 Release version tracking:
-- Current stable release tag reference: `v1.0.0` (auto-updated by release tooling).
+- Current stable release tag reference: `v1.1.0` (auto-updated by release tooling).
 - Root README stable badge is sourced from GitHub Releases.
 - Docs version tracking is pinned in [`docs/docs-version.json`](docs/docs-version.json) and validated in CI/release flows.
 

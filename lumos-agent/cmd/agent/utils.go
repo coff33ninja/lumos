@@ -15,6 +15,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"regexp"
 	"runtime"
 	"slices"
 	"strconv"
@@ -23,6 +24,8 @@ import (
 )
 
 const maxJSONBodyBytes = 1 << 20 // 1 MiB
+
+var normalizedRelayAddressPattern = regexp.MustCompile(`^https?://(?:[A-Za-z0-9.-]+|\[[0-9A-Fa-f:.]+\]):(?:[1-9][0-9]{0,4})$`)
 
 func runPowerAction(action string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -338,6 +341,22 @@ func normalizeRelayAddress(address string, disallowLoopback bool) (string, error
 	}
 
 	return parsed.Scheme + "://" + net.JoinHostPort(host, port), nil
+}
+
+func isTrustedNormalizedRelayAddress(address string) bool {
+	trimmed := strings.TrimSpace(address)
+	if !normalizedRelayAddressPattern.MatchString(trimmed) {
+		return false
+	}
+	parsed, err := url.Parse(trimmed)
+	if err != nil {
+		return false
+	}
+	port, err := strconv.Atoi(parsed.Port())
+	if err != nil {
+		return false
+	}
+	return port >= 1 && port <= 65535
 }
 
 func isDisallowedRelayIP(ip net.IP, disallowLoopback bool) bool {
