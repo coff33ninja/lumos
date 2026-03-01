@@ -61,10 +61,29 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Setup Flutter (Java/Kotlin)
+      if: matrix.language == 'java-kotlin'
+      uses: subosito/flutter-action@v2
+      with:
+        channel: stable
+        cache: true
+
     - name: Prepare Java/Kotlin autobuild
       if: matrix.language == 'java-kotlin'
       shell: bash
       run: |
+        if [ -z "${FLUTTER_ROOT:-}" ]; then
+          echo "FLUTTER_ROOT is not set after flutter-action setup."
+          exit 1
+        fi
+        {
+          echo "flutter.sdk=$FLUTTER_ROOT"
+          if [ -n "${ANDROID_HOME:-}" ]; then
+            echo "sdk.dir=$ANDROID_HOME"
+          elif [ -n "${ANDROID_SDK_ROOT:-}" ]; then
+            echo "sdk.dir=$ANDROID_SDK_ROOT"
+          fi
+        } > lumos_app/android/local.properties
         chmod +x lumos_app/android/gradlew
         if [ -e android ] && [ ! -L android ]; then
           echo "Path 'android' already exists and is not a symlink; refusing to overwrite."
