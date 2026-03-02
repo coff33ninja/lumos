@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Release / Signing / Auto-Update Plan
 
@@ -13,6 +13,7 @@
 - Agent: poll signed manifest endpoint and apply staged update on restart.
 - Tray: check release channel and prompt before downloading signed binaries.
 - Rollback: keep previous binary and state snapshot for fast fallback.
+
 
 
 

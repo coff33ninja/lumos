@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Lumos Agent API Reference
 
@@ -772,6 +772,7 @@ Agents with `bootstrap_peers` configured will:
 ---
 
 *Generated: 2026-02-23*
+
 
 
 

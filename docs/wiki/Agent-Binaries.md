@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Agent Binaries
 
@@ -36,6 +36,7 @@ Unified build from repo root:
 - `lumos-agent-state.json` (state)
 
 These files are runtime/operator files and are not release assets.
+
 
 
 

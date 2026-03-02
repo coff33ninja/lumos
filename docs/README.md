@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Lumos Documentation
 
@@ -31,6 +31,7 @@ This folder contains project-level operational and security documentation.
 - Follow `VERSIONING.md` for RC/stable tag flow and artifact upload policy.
 - Keep `KNOWN_ISSUES_AND_LIMITATIONS.md` and `FUTURE.md` updated when behavior or priorities change.
 - Keep `docs/wiki/*.md` in sync with architecture/ops/security/release changes before publishing wiki updates.
+
 
 
 

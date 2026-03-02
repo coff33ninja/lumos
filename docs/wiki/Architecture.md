@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Architecture
 
@@ -32,6 +32,7 @@ Lumos uses a client-agent model with optional agent-to-agent relay.
 - LAN-first reliability
 - Explicit auth and policy checks
 - Operational transparency through logs, docs, release metadata
+
 
 
 

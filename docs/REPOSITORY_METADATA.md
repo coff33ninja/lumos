@@ -1,3 +1,5 @@
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
+
 # Repository Metadata
 
 Suggested descriptions and tags for Lumos across different platforms.
@@ -338,3 +340,4 @@ Want to contribute? See CONTRIBUTING.md.
 - Emphasize "no cloud required" and "open source" in all messaging
 - Highlight VPN support (especially Tailscale) as it's a strong feature
 - Focus on autonomy, privacy, and self-hosting as core values
+

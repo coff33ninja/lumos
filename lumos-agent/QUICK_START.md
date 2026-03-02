@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Lumos Agent - Quick Start Guide
 
@@ -169,6 +169,7 @@ Key variables:
 - `LUMOS_DRY_RUN` - Set to "false" for production
 - `LUMOS_ADVERTISE_ADDR` - Your IP:port for LAN
 - `LUMOS_BOOTSTRAP_PEERS` - Comma-separated peer addresses
+
 
 
 

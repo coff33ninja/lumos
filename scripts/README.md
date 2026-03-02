@@ -1,3 +1,5 @@
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
+
 # Lumos Release Automation Scripts
 
 This directory contains PowerShell scripts for automating the Lumos release process.
@@ -265,3 +267,4 @@ The script will:
 - Append automatic changelog after a separator
 - Skip releases that already have changelogs
 - Show progress and summary statistics
+

@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Android App
 
@@ -31,6 +31,7 @@ flutter build apk --release
 
 - Current core flow does not require special runtime permissions.
 - Future optional permissions (for richer network targeting/automation) are tracked in `docs/FUTURE.md`.
+
 
 
 

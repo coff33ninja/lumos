@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Lumos Agent (Go)
 
@@ -407,6 +407,7 @@ For detailed security configuration, see [CONFIG_GUIDE.md](CONFIG_GUIDE.md).
 4. Start the agent and open `/` with UI basic auth (`LUMOS_UI_USER` / `LUMOS_UI_PASSWORD`).
 5. Create a pairing token via `/v1/auth/pair`, then store it in your mobile app.
 6. Keep `LUMOS_DRY_RUN=true` until initial command tests pass.
+
 
 
 

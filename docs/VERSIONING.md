@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.1.0; updated_utc=2026-03-01 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Lumos Versioning and Release Method
 
@@ -300,6 +300,7 @@ Important trust distinction:
 1. Cut `1.0.0-rc.1` and validate on Android + Windows + Linux.
 2. Fix regressions if found and repeat RC (`rc.2`, `rc.3`, ...).
 3. Cut `v1.0.0` stable when no blocking issues remain.
+
 
 
 

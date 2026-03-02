@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Code of Conduct
 
@@ -25,6 +25,7 @@ Project maintainers may remove comments, close discussions, or block contributor
 ## Reporting
 
 Report conduct issues privately through repository maintainer contact channels.
+
 
 
 

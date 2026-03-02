@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.1.0; updated_utc=2026-03-01 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Lumos Release Notes
 
@@ -8,8 +8,8 @@ Primary release-notes source for `publish-release.ps1`.
 
 - Channel: `stable`
 - Tag: `v1.2.0`
-- Commit: `auto`
-- Date (UTC): `2026-03-01`
+- Commit: `a54015c`
+- Date (UTC): `2026-03-02`
 - Compatibility baseline: app `v1.1.x` and agent `v1.1.x` patch line.
 
 ## Release Cut Checklist
@@ -84,3 +84,8 @@ From `.github/workflows/ci.yml`, `.github/workflows/release.yml`, and release sc
 - `docs/VERSIONING.md` for tag/channel and compatibility policy.
 - `docs/SECURITY.md`, `docs/SECURITY_IMPROVEMENTS.md`, and credential analysis docs for security posture.
 - `docs/FUTURE.md` for planned post-v1 work.
+
+  - app: `v1.2.x` patch line supported
+
+  - agent: `v1.2.x` patch line supported
+

@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.1.0; updated_utc=2026-03-01 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Lumos
 
@@ -219,7 +219,7 @@ flutter test
   - checksums, signatures, and provenance attestations
 
 Release version tracking:
-- Current stable release tag reference: `v1.1.0` (auto-updated by release tooling).
+- Current stable release tag reference: `v1.2.0` (auto-updated by release tooling).
 - Root README stable badge is sourced from GitHub Releases.
 - Docs version tracking is pinned in [`docs/docs-version.json`](docs/docs-version.json) and validated in CI/release flows.
 
@@ -298,5 +298,6 @@ Use GitHub Security Advisories:
 ## Disclaimer
 
 This software is provided as-is without warranty. You are responsible for secure deployment, access control, and network hardening.
+
 
 

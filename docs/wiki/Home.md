@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Lumos Wiki
 
@@ -37,6 +37,7 @@ Use this wiki as the operator-friendly reference for architecture, setup, securi
 - [Docs-PEER_MANAGEMENT_IMPLEMENTATION](Docs-PEER_MANAGEMENT_IMPLEMENTATION)
 - [Docs-CREDENTIAL_FLOW_ANALYSIS](Docs-CREDENTIAL_FLOW_ANALYSIS)
 - [Docs-CREDENTIAL_VALIDATION_SUMMARY](Docs-CREDENTIAL_VALIDATION_SUMMARY)
+
 
 
 

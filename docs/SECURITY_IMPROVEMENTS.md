@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Security Issues Register (Placeholder)
 
@@ -32,3 +32,4 @@ Use this workflow for every new security item:
 
 Keep entries factual, actionable, and release-linked.
 Avoid speculative or legacy carryover notes.
+

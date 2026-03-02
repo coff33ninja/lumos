@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Security and Trust
 
@@ -31,6 +31,7 @@
 - `docs/SECURITY_IMPROVEMENTS.md`
 - `docs/CREDENTIAL_FLOW_ANALYSIS.md`
 - `docs/CREDENTIAL_VALIDATION_SUMMARY.md`
+
 
 
 

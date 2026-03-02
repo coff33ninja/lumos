@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Lumos Agent - Configuration Guide
 
@@ -418,6 +418,7 @@ Then in app:
 - See `QUICK_START.md` for basic usage
 - See `README.md` for complete API documentation
 - Build the Flutter mobile app for remote control
+
 
 
 

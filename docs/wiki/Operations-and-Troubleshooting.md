@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Operations and Troubleshooting
 
@@ -29,6 +29,7 @@ Check:
 - `lumos-agent/CONFIG_GUIDE.md`
 - `lumos-agent/API_REFERENCE.md`
 - `docs/KNOWN_ISSUES_AND_LIMITATIONS.md`
+
 
 
 

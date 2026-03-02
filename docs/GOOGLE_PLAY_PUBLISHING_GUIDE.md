@@ -1,3 +1,5 @@
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
+
 # Google Play Store Publishing Guide for Lumos
 
 Complete step-by-step guide to publish the Lumos Android app to Google Play Store.
@@ -504,3 +506,4 @@ This is set in `lumos_app/android/app/build.gradle` and must remain consistent f
 ---
 
 **Good luck with your launch! 🚀**
+

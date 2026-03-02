@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Transparency
 
@@ -21,6 +21,7 @@ This project maintains transparency through:
 ## Operating Principle
 
 The goal is practical, user-controlled software with documented behavior, known limits, and auditable release changes.
+
 
 
 

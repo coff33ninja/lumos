@@ -1,4 +1,4 @@
-<!-- lumos-docs-release: tag=v1.0.0; updated_utc=2026-02-27 -->
+<!-- lumos-docs-release: tag=v1.2.0; updated_utc=2026-03-02 -->
 
 # Lumos Future Roadmap
 
@@ -215,6 +215,7 @@ Planned:
   - verification of release checksums/signatures
   - APK signer continuity checks
   - compatibility check steps before upgrade
+
 
 
 
