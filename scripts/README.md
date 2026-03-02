@@ -177,12 +177,23 @@ The complete release process integrates these scripts:
    ./scripts/validate-docs-version.ps1 -ExpectedTag v1.1.0 -Channel stable
    ```
 
-4. **Publish:**
+4. **Publish (changelog auto-generated):**
    ```powershell
    ./publish-release.ps1 -Channel stable -Tag v1.1.0 -Rebuild
    ```
 
-The changelog is automatically generated and included in the GitHub release notes.
+### One-Time: Update Old Releases
+
+```powershell
+./scripts/update-existing-releases.ps1 -AllReleases -DryRun
+./scripts/update-existing-releases.ps1 -AllReleases
+```
+
+### If You Need to Revert a Release
+
+```powershell
+./scripts/handle-release-revert.ps1 -RevertedTag v1.2.0 -RollbackToTag v1.1.0
+```
 
 ## Automatic Changelog in Releases
 

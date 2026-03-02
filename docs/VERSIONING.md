@@ -114,6 +114,47 @@ One-command preflight:
 ./scripts/release-doctor.ps1 -ExpectedTag v1.1.0 -Rebuild
 ```
 
+## Automatic Changelog Generation
+
+Every release automatically includes a detailed changelog of all commits since the previous release:
+
+- Commits are grouped by type (Features, Bug Fixes, Security, Documentation, etc.)
+- Each entry includes commit hash, message, author, and date
+- Supports conventional commit format (feat:, fix:, docs:, etc.)
+- Falls back to keyword detection for non-conventional commits
+
+### When It Happens
+
+**Automatic (new releases):**
+- Runs during `publish-release.ps1` or GitHub Actions workflow
+- Generates changelog from previous tag to current tag
+- Appends to release notes automatically
+
+**Manual (existing releases):**
+```powershell
+# Update all old releases with changelogs
+./scripts/update-existing-releases.ps1 -AllReleases -DryRun
+./scripts/update-existing-releases.ps1 -AllReleases
+```
+
+**Preview before releasing:**
+```powershell
+./scripts/preview-changelog.ps1 -ShowStats
+```
+
+### Handling Release Reverts
+
+If you need to revert a release:
+
+```powershell
+./scripts/handle-release-revert.ps1 -RevertedTag v1.2.0 -RollbackToTag v1.1.0
+```
+
+This will:
+1. Delete the bad release from GitHub
+2. Delete the git tag
+3. Verify the rollback release has proper changelog
+
 ## Publish Commands
 
 From repo root:
