@@ -37,6 +37,8 @@ func main() {
 	mux.HandleFunc("/v1/peer/list", srv.handlePeerList)
 	mux.HandleFunc("/v1/peer/forward", srv.handlePeerForward)
 	mux.HandleFunc("/v1/peer/relay", srv.handlePeerRelay)
+	mux.HandleFunc("/v1/hive/join", srv.handleHiveJoin)
+	mux.HandleFunc("/v1/hive/accept", srv.handleHiveAccept)
 	mux.HandleFunc("/v1/auth/pair", srv.handleAuthPair)
 	mux.HandleFunc("/v1/auth/token/list", srv.handleAuthTokenList)
 	mux.HandleFunc("/v1/auth/token/self/revoke", srv.handleAuthTokenSelfRevoke)

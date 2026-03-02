@@ -1201,9 +1201,21 @@ class LumosApi {
     required String peerId,
     required String peerAddress,
     required String peerPassword,
+    bool autoHandshake = false,
   }) async {
     try {
       final uri = _httpUri(address, '/v1/ui/peer/upsert');
+      final body = <String, dynamic>{
+        'agent_id': peerId,
+        'address': peerAddress,
+        'password': peerPassword,
+      };
+      
+      // Add auto_handshake flag if enabled
+      if (autoHandshake) {
+        body['auto_handshake'] = true;
+      }
+      
       final response = await http
           .post(
             uri,
@@ -1212,10 +1224,38 @@ class LumosApi {
               'Authorization':
                   'Basic ${base64Encode(utf8.encode('lumos:$password'))}',
             },
+            body: json.encode(body),
+          )
+          .timeout(timeout);
+      return _parseApiResult(response);
+    } catch (e) {
+      return ApiCommandResult(ok: false, message: e.toString());
+    }
+  }
+
+  /// Join hive (initiate cluster key handshake)
+  static Future<ApiCommandResult> joinHive(
+    String address, {
+    required String password,
+    required String peerId,
+    required String peerAddress,
+    required String peerPassword,
+    bool force = false,
+  }) async {
+    try {
+      final uri = _httpUri(address, '/v1/hive/join');
+      final response = await http
+          .post(
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Lumos-Password': password,
+            },
             body: json.encode({
-              'agent_id': peerId,
-              'address': peerAddress,
-              'password': peerPassword,
+              'peer_agent_id': peerId,
+              'peer_address': peerAddress,
+              'peer_password': peerPassword,
+              'force': force,
             }),
           )
           .timeout(timeout);

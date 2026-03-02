@@ -180,7 +180,13 @@ func (s *Server) handleUIPeerUpsert(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusMethodNotAllowed, APIResponse{OK: false, Message: "method not allowed"})
 		return
 	}
-	var req PeerRegisterRequest
+
+	// Extended request with auto_handshake flag
+	var req struct {
+		PeerRegisterRequest
+		AutoHandshake bool `json:"auto_handshake,omitempty"`
+	}
+
 	if err := decodeJSON(r, &req); err != nil {
 		writeJSON(w, http.StatusBadRequest, APIResponse{OK: false, Message: err.Error()})
 		return
@@ -190,7 +196,37 @@ func (s *Server) handleUIPeerUpsert(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// If password provided, verify peer is reachable and password is correct
+	// If auto_handshake is enabled, initiate cluster key sync
+	if req.AutoHandshake && strings.TrimSpace(req.Password) != "" {
+		cfg := s.cfgSnapshot()
+		clusterKeyUpdated, err := s.initiateHiveHandshake(req.AgentID, req.Address, req.Password, cfg.ClusterKey, false)
+		if err != nil {
+			s.recordAudit("hive", "auto-join", req.AgentID, req.Address, false, "auto-handshake failed: "+err.Error(), remoteIP(r))
+			writeJSON(w, http.StatusBadRequest, APIResponse{
+				OK:      false,
+				Message: "auto-handshake failed: " + err.Error(),
+			})
+			return
+		}
+
+		s.recordAudit("hive", "auto-join", req.AgentID, req.Address, true, "peer joined hive via auto-handshake", remoteIP(r))
+
+		// Register peer after successful handshake
+		s.upsertPeer(req.AgentID, req.Address, req.PublicAddress, req.VPNAddress)
+		if err := s.saveState(); err != nil {
+			writeJSON(w, http.StatusInternalServerError, APIResponse{OK: false, Message: "peer joined hive but persist failed: " + err.Error()})
+			return
+		}
+
+		writeJSON(w, http.StatusOK, map[string]interface{}{
+			"ok":                 true,
+			"message":            "peer joined hive successfully",
+			"cluster_key_synced": clusterKeyUpdated,
+		})
+		return
+	}
+
+	// Original behavior: verify peer if password provided
 	if strings.TrimSpace(req.Password) != "" {
 		if err := s.verifyPeerAccess(req.Address, req.Password); err != nil {
 			writeJSON(w, http.StatusUnauthorized, APIResponse{OK: false, Message: "peer verification failed: " + err.Error()})
@@ -198,7 +234,7 @@ func (s *Server) handleUIPeerUpsert(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	s.upsertPeer(req.AgentID, req.Address, "", "")
+	s.upsertPeer(req.AgentID, req.Address, req.PublicAddress, req.VPNAddress)
 	if err := s.saveState(); err != nil {
 		writeJSON(w, http.StatusInternalServerError, APIResponse{OK: false, Message: "peer upserted but persist failed: " + err.Error()})
 		return

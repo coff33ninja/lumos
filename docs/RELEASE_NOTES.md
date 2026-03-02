@@ -7,7 +7,7 @@ Primary release-notes source for `publish-release.ps1`.
 ## Release Metadata
 
 - Channel: `stable`
-- Tag: `v1.1.0`
+- Tag: `v1.2.0`
 - Commit: `auto`
 - Date (UTC): `2026-03-01`
 - Compatibility baseline: app `v1.1.x` and agent `v1.1.x` patch line.

@@ -238,3 +238,34 @@ type AuditEntry struct {
 	Message   string    `json:"message"`
 	RemoteIP  string    `json:"remote_ip,omitempty"`
 }
+
+type HiveJoinRequest struct {
+	PeerAgentID  string `json:"peer_agent_id"`
+	PeerAddress  string `json:"peer_address"`
+	PeerPassword string `json:"peer_password"`
+	ClusterKey   string `json:"cluster_key"`
+	Force        bool   `json:"force,omitempty"`
+}
+
+type HiveJoinResponse struct {
+	OK               bool   `json:"ok"`
+	Message          string `json:"message"`
+	PeerAgentID      string `json:"peer_agent_id,omitempty"`
+	PeerAddress      string `json:"peer_address,omitempty"`
+	ClusterKeyUpdate bool   `json:"cluster_key_updated"`
+	PeerRestarted    bool   `json:"peer_restarted"`
+}
+
+type HiveAcceptRequest struct {
+	MasterAgentID string `json:"master_agent_id"`
+	MasterAddress string `json:"master_address"`
+	ClusterKey    string `json:"cluster_key"`
+	Force         bool   `json:"force,omitempty"`
+}
+
+type HiveAcceptResponse struct {
+	OK               bool   `json:"ok"`
+	Message          string `json:"message"`
+	ClusterKeyUpdate bool   `json:"cluster_key_updated"`
+	RestartRequired  bool   `json:"restart_required"`
+}

@@ -24,6 +24,7 @@ class _PeerManagementScreenState extends State<PeerManagementScreen> {
   String? _message;
   bool _isError = false;
   List<String> _peers = [];
+  bool _joinHive = false; // New: Join hive toggle
 
   @override
   void initState() {
@@ -329,6 +330,60 @@ class _PeerManagementScreenState extends State<PeerManagementScreen> {
               ),
             ),
             const SizedBox(height: 16),
+            // Join Hive toggle
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2A2A3E),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: _joinHive ? Colors.orange.withValues(alpha: 0.5) : Colors.white24,
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.hub_outlined,
+                    color: _joinHive ? Colors.orange[300] : Colors.white54,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Join Hive (Auto-sync Cluster Key)',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Automatically sync cluster key for peer-to-peer communication',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Colors.white54,
+                                fontSize: 11,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Switch(
+                    value: _joinHive,
+                    onChanged: (value) {
+                      setState(() {
+                        _joinHive = value;
+                      });
+                    },
+                    activeTrackColor: Colors.orange[300],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
@@ -441,13 +496,20 @@ class _PeerManagementScreenState extends State<PeerManagementScreen> {
         peerId: peerId,
         peerAddress: peerAddress,
         peerPassword: peerPassword,
+        autoHandshake: _joinHive, // Pass join hive flag
       );
 
       if (result.ok) {
-        _show('Peer added successfully');
+        final successMsg = _joinHive 
+            ? 'Peer joined hive successfully (cluster key synced)'
+            : 'Peer added successfully';
+        _show(successMsg);
         _peerIdController.clear();
         _peerAddressController.clear();
         _peerPasswordController.clear();
+        setState(() {
+          _joinHive = false; // Reset toggle
+        });
         await _loadPeers();
       } else {
         _show(
