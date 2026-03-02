@@ -12,7 +12,9 @@
 [![Self Hosted](https://img.shields.io/badge/model-self--hosted-2f9e44)](docs/README.md)
 [![No Mandatory Cloud](https://img.shields.io/badge/cloud-not%20required-495057)](docs/README.md)
 
-Lumos is a LAN-first remote power-control stack:
+**Lumos puts your local network in your pocket.**
+
+A LAN-first remote power-control stack for discovering, monitoring, and controlling devices on your home or office network — with no mandatory cloud dependency.
 
 - `lumos-agent`: Go service for Wake-on-LAN, power actions, relay, policy, and web admin
 - `lumos_app`: Flutter Android client for discovery, pairing, and daily control
@@ -40,13 +42,27 @@ Expected assets:
 - `agent.exe`
 - `agent-linux-amd64`
 
-## Why Lumos
+## Key Features
 
-- Fast local-network control without cloud lock-in
-- Works across VPN networks (for example Tailscale) for remote peer control
-- Token-first auth model for day-to-day safety
-- Policy-driven command controls (`wake`, `shutdown`, `reboot`, `sleep`)
-- Release pipeline with compatibility checks, signed artifacts, checksums, and provenance attestations
+### For Users
+- **Automatic device discovery** via mDNS (`_lumos-agent._tcp`)
+- **Wake-on-LAN** support for remotely powering on devices
+- **Power control** commands: shutdown, reboot, sleep
+- **VPN-friendly** — works across Tailscale and other VPN networks
+- **Token-based authentication** with scope control (power-admin, wake-only, read-only)
+- **Policy-driven permissions** for fine-grained action control
+- **Peer relay** for multi-agent orchestration
+- **Web UI** for agent configuration and management
+- **100% local** — no accounts, no mandatory cloud, no data collection
+
+### For Developers
+- **Open source** — fully auditable codebase (MIT license)
+- **Self-hosted first** — run on your own infrastructure
+- **Transparent releases** — signed artifacts, checksums, provenance attestations
+- **Cross-platform agent** — Windows and Linux support
+- **REST API** with WebSocket events for real-time updates
+- **Encrypted state files** for secure credential storage
+- **CI/CD pipeline** with automated testing and release validation
 
 ## Prerequisites
 
@@ -69,34 +85,68 @@ Expected assets:
 | `lumos-agent` | API + relay + policy + web admin | Windows, Linux |
 | `lumos_app` | Discovery, pairing, control UX | Android |
 
+## Use Cases
+
+- **Home lab management** — Control your servers and workstations from your phone
+- **Network administration** — Manage power states across multiple devices
+- **Smart home integration** — Wake devices on demand without cloud services
+- **Remote work** — Access your home network devices over VPN
+- **Energy efficiency** — Easily shutdown unused devices to save power
+
 ## Core Capabilities
 
-### Agent
+### Agent (lumos-agent)
 
-- Power commands (`wake`, `shutdown`, `reboot`, `sleep`)
-- Pair/token APIs with scope enforcement (`power-admin`, `wake-only`, `read-only`)
-- Peer relay and policy APIs (`/v1/policy/*`, `/v1/peer/*`)
-- Mesh-style peer orchestration for agents that are temporarily offline from direct app access
-- Web UI and event stream support
-- First-run secure credential generation
+- **Power commands**: `wake`, `shutdown`, `reboot`, `sleep`
+- **Authentication**: Password-based pairing with long-lived tokens
+- **Token scopes**: `power-admin`, `wake-only`, `read-only`
+- **Policy engine**: Fine-grained per-device action allowances
+- **Peer relay**: Mesh-style orchestration for multi-agent setups
+- **Web UI**: Built-in admin interface at `http://localhost:8080/`
+- **Event streaming**: WebSocket support for real-time updates
+- **Auto-generated credentials**: Secure random passwords on first run
+- **Encrypted state**: AES-256 encrypted persistent storage
+- **Rate limiting**: Protection against brute-force attacks
+- **Optional TLS**: HTTPS support for secure remote access
 
-### Android App
+### Android App (lumos_app)
 
-- mDNS + scan-based discovery
-- Password bootstrap -> token-first operation
-- Token management and policy management UI
-- Peer management UI
-- Release-aware version visibility
+- **Device discovery**: mDNS + server-side scan + fallback direct scan
+- **Pairing flow**: Password used once, then token-based operation
+- **Token management**: List, rotate, and revoke tokens
+- **Policy management**: Configure action allowances per device
+- **Peer management**: Register and manage agent mesh
+- **Version awareness**: Compatibility checks for safe operations
+- **Local storage**: All data stored on device via SharedPreferences
+- **No analytics**: Zero tracking or data collection
 
-## Network Reality Check
+## Network Architecture
 
-- LAN-first by default, but supports VPN-connected control paths.
-- Verified in real use: shutdown command executed successfully over a Tailscale IP path.
-- Peer/relay model helps route actions through reachable agents when direct paths are unavailable.
+Lumos is designed with a **LAN-first** philosophy but supports flexible deployment:
+
+- **Local network**: Direct communication between app and agents on the same LAN
+- **VPN networks**: Full support for VPN-connected control (tested with Tailscale)
+- **Peer relay**: Route commands through reachable agents when direct paths are unavailable
+- **No cloud required**: All communication stays within your private network or VPN tunnel
+- **Optional internet**: Can expose agents over the internet with TLS (not recommended without VPN)
+
+**Real-world validation**: Shutdown commands successfully executed over Tailscale IP paths in production use.
 
 ## Quick Start
 
-### 1) Start the Agent
+### Option 1: Download Pre-built Releases (Recommended)
+
+Download the latest release from:
+- https://github.com/coff33ninja/lumos/releases/latest
+
+Available assets:
+- `app-release.apk` — Android app (install on your phone)
+- `agent.exe` — Windows agent
+- `agent-linux-amd64` — Linux agent
+
+### Option 2: Build from Source
+
+#### 1) Start the Agent
 
 ```powershell
 cd lumos-agent
@@ -104,19 +154,44 @@ go build -o lumos-agent ./cmd/agent
 ./lumos-agent
 ```
 
-First run generates secure credentials in `lumos-config.json` (password, cluster key, UI password, shutdown key, state encryption salt).
+**First run generates secure credentials** in `lumos-config.json`:
+- `password` — Main API authentication (24 hex chars)
+- `cluster_key` — Peer mesh networking (32 hex chars)
+- `ui_password` — Web UI access (24 hex chars)
+- `shutdown_key` — Internal graceful shutdown (32 hex chars)
+- `state_encryption_salt` — State file encryption (32 hex chars)
 
-### 2) Run App Locally (Dev)
+Open `http://localhost:8080/` to access the web UI.
+
+#### 2) Install the Android App
 
 ```powershell
 cd lumos_app
 flutter pub get
-flutter run
+flutter build apk --release
 ```
 
-### 3) Run Local Validation
+Install `build/app/outputs/flutter-apk/app-release.apk` on your Android device.
+
+#### 3) Pair and Control
+
+1. Open the Lumos app on your phone
+2. Discover agents via mDNS or manual IP entry
+3. Pair using the password from `lumos-config.json`
+4. Start controlling your devices!
+
+### Development Workflow
 
 ```powershell
+# Run agent in dev mode
+cd lumos-agent
+go run ./cmd/agent
+
+# Run app in dev mode
+cd lumos_app
+flutter run
+
+# Run tests
 cd lumos-agent
 go test ./...
 go vet ./...
@@ -159,26 +234,59 @@ Release version tracking:
 
 ## Documentation
 
-Detailed operational and release specifics are intentionally kept under `docs/`:
+### Getting Started
+- [`lumos-agent/README.md`](lumos-agent/README.md) — Agent setup, API reference, configuration
+- [`lumos-agent/QUICK_START.md`](lumos-agent/QUICK_START.md) — Fast setup guide
+- [`lumos-agent/CONFIG_GUIDE.md`](lumos-agent/CONFIG_GUIDE.md) — Configuration options
+- [`lumos-agent/API_REFERENCE.md`](lumos-agent/API_REFERENCE.md) — Complete API documentation
+- [`lumos_app/README.md`](lumos_app/README.md) — Android app overview
 
-- [`docs/README.md`](docs/README.md) documentation index
-- [`docs/VERSIONING.md`](docs/VERSIONING.md) release strategy, tags, compatibility, signing flow
-- [`docs/RELEASE_NOTES.md`](docs/RELEASE_NOTES.md) release notes source
-- [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md) pre-cut checklist
-- [`docs/SECURITY.md`](docs/SECURITY.md) security policy and reporting
-- [`docs/SIGNING_AND_KEYS.md`](docs/SIGNING_AND_KEYS.md) signing/key custody guidance
-- [`docs/KNOWN_ISSUES_AND_LIMITATIONS.md`](docs/KNOWN_ISSUES_AND_LIMITATIONS.md) active limitations
-- [`docs/FUTURE.md`](docs/FUTURE.md) roadmap
+### Project Documentation
+- [`docs/README.md`](docs/README.md) — Documentation index
+- [`docs/VERSIONING.md`](docs/VERSIONING.md) — Release strategy and compatibility
+- [`docs/RELEASE_NOTES.md`](docs/RELEASE_NOTES.md) — Changelog and release history
+- [`docs/FUTURE.md`](docs/FUTURE.md) — Roadmap and planned features
+- [`docs/KNOWN_ISSUES_AND_LIMITATIONS.md`](docs/KNOWN_ISSUES_AND_LIMITATIONS.md) — Current limitations
+
+### Security & Operations
+- [`docs/SECURITY.md`](docs/SECURITY.md) — Security policy and vulnerability reporting
+- [`docs/SECURITY_IMPROVEMENTS.md`](docs/SECURITY_IMPROVEMENTS.md) — Security audit findings
+- [`docs/CREDENTIAL_FLOW_ANALYSIS.md`](docs/CREDENTIAL_FLOW_ANALYSIS.md) — Credential usage analysis
+- [`docs/SIGNING_AND_KEYS.md`](docs/SIGNING_AND_KEYS.md) — Signing and key management
+
+### Wiki
+- [`docs/wiki/`](docs/wiki/) — Detailed guides synced to GitHub Wiki
+  - [Architecture](docs/wiki/Architecture.md)
+  - [Security and Trust](docs/wiki/Security-and-Trust.md)
+  - [Operations and Troubleshooting](docs/wiki/Operations-and-Troubleshooting.md)
+  - [Releases and Versioning](docs/wiki/Releases-and-Versioning.md)
 
 ## Security
 
-- Do not report vulnerabilities in public issues.
-- Use GitHub Security Advisories (Security tab -> Report a vulnerability).
-- Security policy and hardening guidance:
-  - [`SECURITY.md`](SECURITY.md)
-  - [`docs/SECURITY.md`](docs/SECURITY.md)
-  - [`docs/SECURITY_IMPROVEMENTS.md`](docs/SECURITY_IMPROVEMENTS.md)
-  - [`docs/CREDENTIAL_FLOW_ANALYSIS.md`](docs/CREDENTIAL_FLOW_ANALYSIS.md)
+Lumos implements multiple security layers:
+
+- **Auto-generated credentials** — Cryptographically secure random passwords on first run
+- **Token-based authentication** — Password used once for pairing, then long-lived tokens
+- **Rate limiting** — 5 failed attempts = 3 minute lockout
+- **Encrypted state** — AES-256 encrypted persistent storage
+- **HMAC signatures** — Peer-to-peer commands use HMAC-SHA256
+- **Optional TLS** — HTTPS support for secure remote access
+- **Policy engine** — Fine-grained action allowances per device
+- **No data collection** — Zero analytics or tracking
+
+### Reporting Security Issues
+
+**DO NOT** open public GitHub issues for security vulnerabilities.
+
+Use GitHub Security Advisories:
+- Go to the Security tab → Report a vulnerability
+- See [`docs/SECURITY.md`](docs/SECURITY.md) for full reporting guidelines
+
+### Security Documentation
+- [`SECURITY.md`](SECURITY.md) — Security policy
+- [`docs/SECURITY.md`](docs/SECURITY.md) — Detailed security guidance
+- [`docs/SECURITY_IMPROVEMENTS.md`](docs/SECURITY_IMPROVEMENTS.md) — Security audit findings
+- [`docs/CREDENTIAL_FLOW_ANALYSIS.md`](docs/CREDENTIAL_FLOW_ANALYSIS.md) — Credential usage analysis
 
 ## Governance
 
