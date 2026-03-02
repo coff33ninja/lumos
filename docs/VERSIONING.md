@@ -133,6 +133,8 @@ From repo root:
 ./publish-release.ps1 -Channel beta -Rebuild
 ```
 
+Commit changelog is automatically generated and included in release notes.
+
 ## Asset Policy
 
 Only upload binary artifacts:

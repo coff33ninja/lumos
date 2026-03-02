@@ -74,10 +74,12 @@ Use this checklist before creating a final squashed release commit/PR.
 
 ## 7. Final release notes
 
-- [ ] Summarize user-visible changes.
+- [ ] Summarize user-facing changes.
 - [ ] Summarize security/hardening updates.
 - [ ] Include test evidence and screenshot references.
 - [ ] List known limitations and follow-up work items.
+
+Note: Commit changelog is auto-generated during release.
 
 ## 8. Release integrity
 
