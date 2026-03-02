@@ -174,7 +174,17 @@ From repo root:
 ./publish-release.ps1 -Channel beta -Rebuild
 ```
 
-Commit changelog is automatically generated and included in release notes.
+## Automatic Release Workflow
+
+When a release is published (via GitHub Actions or `publish-release.ps1`):
+
+1. **Changelog generation** - Automatic commit history from previous tag
+2. **Docs metadata update** - Updates `docs/docs-version.json`, `RELEASE_NOTES.md`, `README.md`
+3. **Docs stamping** - All markdown files stamped with release marker
+4. **Auto-commit** - Docs changes committed with `[skip ci]` tag
+5. **Wiki sync** - GitHub Wiki automatically updated from `docs/wiki/`
+
+All of this happens automatically - no manual intervention needed.
 
 ## Asset Policy
 

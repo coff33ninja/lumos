@@ -8,6 +8,8 @@ on:
       - "docs/*.md"
       - "scripts/publish-wiki.ps1"
       - ".github/workflows/wiki-sync.yml"
+  release:
+    types: [published, edited]
   workflow_dispatch:
 
 permissions:

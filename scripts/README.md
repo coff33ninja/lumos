@@ -160,28 +160,23 @@ Validates Android APK signing certificate continuity.
 
 ## Release Workflow
 
-The complete release process integrates these scripts:
+The complete release process is fully automated:
 
-1. **Prepare release:**
-   ```powershell
-   ./scripts/preview-changelog.ps1 -ShowStats
-   ```
-
-2. **Update documentation:**
-   ```powershell
-   ./scripts/update-release-docs.ps1 -Tag v1.1.0 -Channel stable
-   ```
-
-3. **Validate:**
-   ```powershell
-   ./scripts/validate-version-policy.ps1
-   ./scripts/validate-release-compatibility.ps1
-   ./scripts/validate-docs-version.ps1 -ExpectedTag v1.1.0 -Channel stable
-   ```
-
-4. **Publish (changelog auto-generated):**
+1. **Publish release:**
    ```powershell
    ./publish-release.ps1 -Channel stable -Tag v1.1.0 -Rebuild
+   ```
+
+2. **Automatic post-release (GitHub Actions):**
+   - Changelog generation from git history
+   - Docs metadata updates
+   - All markdown files stamped with release marker
+   - Changes auto-committed to main branch
+   - Wiki sync triggered automatically
+
+3. **Manual post-release (if needed):**
+   ```powershell
+   ./scripts/post-release-automation.ps1 -Tag v1.1.0 -Channel stable
    ```
 
 ### One-Time: Update Old Releases
@@ -196,6 +191,17 @@ The complete release process integrates these scripts:
 ```powershell
 ./scripts/handle-release-revert.ps1 -RevertedTag v1.2.0 -RollbackToTag v1.1.0
 ```
+
+## What Gets Automated
+
+Every release automatically:
+- ✓ Generates commit changelog grouped by type
+- ✓ Updates `docs/docs-version.json` with release tag and date
+- ✓ Updates `docs/RELEASE_NOTES.md` metadata
+- ✓ Updates `README.md` stable version reference
+- ✓ Stamps all markdown docs with release marker
+- ✓ Commits docs changes to main branch
+- ✓ Syncs GitHub Wiki from `docs/wiki/`
 
 ## Automatic Changelog in Releases
 

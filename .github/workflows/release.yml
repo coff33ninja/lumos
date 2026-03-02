@@ -94,6 +94,8 @@ jobs:
             -Channel "$env:RELEASE_CHANNEL" `
             -Commit "auto" `
             -DocsVersionFile "docs/docs-version.json"
+          
+          Write-Host "✓ Release docs updated and stamped" -ForegroundColor Green
 
       - uses: actions/setup-go@v5
         with:
@@ -244,3 +246,27 @@ jobs:
             --clobber `
             build/checksums.txt.sig `
             build/checksums.txt.pem
+
+      - name: Commit updated docs metadata
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          $hasChanges = git status --porcelain
+          if ($hasChanges) {
+            git add docs/docs-version.json docs/RELEASE_NOTES.md docs/wiki/Releases-and-Versioning.md README.md
+            git commit -m "docs(release): auto-update metadata for $env:RELEASE_TAG [skip ci]"
+            git push origin HEAD:main
+            Write-Host "✓ Docs metadata committed and pushed" -ForegroundColor Green
+          } else {
+            Write-Host "No docs changes to commit" -ForegroundColor Yellow
+          }
+
+      - name: Trigger wiki sync
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run wiki-sync.yml --repo "${{ github.repository }}"
+          Write-Host "✓ Wiki sync triggered" -ForegroundColor Green
