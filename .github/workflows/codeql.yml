@@ -14,8 +14,24 @@ name: "CodeQL Advanced"
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - "docs/**"
+      - "*.md"
+      - ".github/workflows/wiki-sync.yml"
+      - "scripts/publish-wiki.ps1"
+      - "scripts/generate-*.ps1"
+      - "scripts/update-*.ps1"
+      - "scripts/validate-*.ps1"
   pull_request:
     branches: [ "main" ]
+    paths-ignore:
+      - "docs/**"
+      - "*.md"
+      - ".github/workflows/wiki-sync.yml"
+      - "scripts/publish-wiki.ps1"
+      - "scripts/generate-*.ps1"
+      - "scripts/update-*.ps1"
+      - "scripts/validate-*.ps1"
   schedule:
     - cron: '18 13 * * 2'
 
